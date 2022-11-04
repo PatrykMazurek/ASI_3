@@ -6,11 +6,15 @@ import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     
     private ServerSocket serverSocket;
     private Socket socket;
+    private List<Socket> socketList;
 
     public Server(int port){
         try{
@@ -21,15 +25,17 @@ public class Server {
     }
 
     public void serverConnection(){
-        
+        ExecutorService service = Executors.newCachedThreadPool();
         while(true){
             try {
                 System.out.println("Oczekuje na klienta ...");
                 socket = serverSocket.accept();
                 System.out.println("Nawiązałem połączenie z adresem" + 
                 socket.getInetAddress().getHostAddress());
-                sendMessageToClient();
-                disconnectClient();
+                service.submit(new ServerThread(socket));
+                socketList.add(socket);
+//                sendMessageToClient();
+//                disconnectClient();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
