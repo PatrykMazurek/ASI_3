@@ -1,5 +1,7 @@
 package up;
 
+import up.DB.DBConnection;
+import up.DB.DBOperation;
 import up.TestThread.StartTikTak;
 import up.TestThread.TestRunnable;
 import up.TestThread.TestThread;
@@ -8,6 +10,7 @@ import up.TestThread.TikTak;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,13 +47,17 @@ public class App {
 //        TestThread tsR = new TestThread(200, 10);
 //        tsR.startRunnambleFixed(10);
 //        tsR.statCallble(10);
-        TikTak tt = new TikTak();
+//        TikTak tt = new TikTak();
+//
+//        StartTikTak t1 = new StartTikTak("Tik", tt);
+//        StartTikTak t2 = new StartTikTak("Tak", tt);
 
-        StartTikTak t1 = new StartTikTak("Tik", tt);
-        StartTikTak t2 = new StartTikTak("Tak", tt);
-
+        DBConnection conn = new DBConnection();
+        Connection c = conn.connectToSqlite();
+        conn.createTable();
+        DBOperation operation = new DBOperation(c);
+        operation.insertPerson("Patryk", "Mazurek", 33);
+        conn.disconnect();
         System.out.println("Zakończenie wątka main");
-
-
     }
 }
