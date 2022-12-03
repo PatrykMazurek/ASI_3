@@ -1,9 +1,6 @@
 package up.DB;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DBConnection {
 
@@ -24,6 +21,21 @@ public class DBConnection {
         return null;
     }
 
+    public Connection connectionToMySql(){
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3307/test",
+                    "root",
+                    "usbw"
+            );
+            System.out.println("Połączono z bazą danych");
+            return conn;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void createTable(){
         try {
             PreparedStatement preper = conn.prepareStatement(
@@ -33,6 +45,26 @@ public class DBConnection {
                             "LastName TEXT," +
                             "Age INTEGER)");
             preper.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Savepoint getPoint(){
+        try {
+            Savepoint s = conn.setSavepoint();
+            conn.setAutoCommit(false);
+            System.out.println("Utworzono punkt przywracania ");
+            return s;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void getRollback(Savepoint point){
+        try {
+            conn.rollback(point);
         } catch (SQLException e) {
             e.printStackTrace();
         }

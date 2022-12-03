@@ -6,15 +6,17 @@ import up.TestThread.StartTikTak;
 import up.TestThread.TestRunnable;
 import up.TestThread.TestThread;
 import up.TestThread.TikTak;
+import up.server.UDPClient;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Savepoint;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class App {
 
@@ -52,12 +54,51 @@ public class App {
 //        StartTikTak t1 = new StartTikTak("Tik", tt);
 //        StartTikTak t2 = new StartTikTak("Tak", tt);
 
-        DBConnection conn = new DBConnection();
-        Connection c = conn.connectToSqlite();
-        conn.createTable();
-        DBOperation operation = new DBOperation(c);
-        operation.insertPerson("Patryk", "Mazurek", 33);
-        conn.disconnect();
+//        DBConnection conn = new DBConnection();
+////        Connection c = conn.connectToSqlite();
+//        Connection c = conn.connectionToMySql();
+////        conn.createTable();
+//        DBOperation operation = new DBOperation(c);
+//        Savepoint s = conn.getPoint();
+//        operation.updatePerson("Jan", "Mazurek");
+////        operation.GetPersonProc(3);
+//        operation.getAllPersonProc();
+//        conn.getRollback(s);
+//        System.out.println("powrót do punktu przywracania");
+//        operation.getAllPersonProc();
+//        conn.disconnect();
+
+//        UDPClient client = new UDPClient();
+//
+//        Thread t1 = new Thread(new UDPClient());
+//        Thread t2 = new Thread(new UDPClient());
+//        Thread t3 = new Thread(new UDPClient());
+//
+//        t1.start();
+//        t2.start();
+//        t3.start();
+
+        BoardGame bg = new BoardGame();
+        List<BoardGame> boardGameList = bg.initListGame();
+
+//        Stream<BoardGame> stream = boardGameList.stream();
+//        Map<Integer, List<BoardGame>> tempList = boardGameList.stream()
+//                .filter(g -> g.name.contains("g"))
+//                .filter(g -> g.minPlayers > 1)
+//                .filter(g -> g.price < 50)
+//                .collect(Collectors.groupingBy(BoardGame::getYear));
+
+        BoardGame firstBoardGame = boardGameList.stream()
+                .filter(g -> g.name.contains("g"))
+                .filter(g -> g.minPlayers > 1)
+                .max(Comparator.comparing(BoardGame::getRating)).get();
+
+
+        System.out.println(firstBoardGame);
+
+//        client.getMessage("end");
+//        client.close();
+
         System.out.println("Zakończenie wątka main");
     }
 }
