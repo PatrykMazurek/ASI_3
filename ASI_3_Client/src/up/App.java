@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Savepoint;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,20 +83,37 @@ public class App {
         BoardGame bg = new BoardGame();
         List<BoardGame> boardGameList = bg.initListGame();
 
-//        Stream<BoardGame> stream = boardGameList.stream();
-//        Map<Integer, List<BoardGame>> tempList = boardGameList.stream()
-//                .filter(g -> g.name.contains("g"))
-//                .filter(g -> g.minPlayers > 1)
-//                .filter(g -> g.price < 50)
-//                .collect(Collectors.groupingBy(BoardGame::getYear));
+        Supplier<Stream<BoardGame>> stream = () -> boardGameList.stream();
+        Map<Integer, List<BoardGame>> tempList = boardGameList.stream()
+                .filter(g -> g.name.contains("g"))
+                .filter(g -> g.minPlayers > 1)
+                .filter(g -> g.price < 50)
+                .collect(Collectors.groupingBy(BoardGame::getYear));
 
         BoardGame firstBoardGame = boardGameList.stream()
                 .filter(g -> g.name.contains("g"))
                 .filter(g -> g.minPlayers > 1)
-                .max(Comparator.comparing(BoardGame::getRating)).get();
-
-
+                .max(Comparator.comparing(BoardGame::getRating))
+                .orElse(new BoardGame());
         System.out.println(firstBoardGame);
+
+        List<BoardGame> boardGamesSorted = boardGameList.stream()
+                .sorted(Comparator.comparing(BoardGame::getYear).reversed())
+                .collect(Collectors.toList());
+
+        Predicate<BoardGame> find = g -> g.maxPlayers == 4;
+
+
+        if (stream.get().anyMatch(find)){
+            System.out.println("Tak");
+        }else {
+            System.out.println("Nie");
+        }
+        if (stream.get().allMatch(find)){
+            System.out.println("Tak");
+        }else {
+            System.out.println("Nie");
+        }
 
 //        client.getMessage("end");
 //        client.close();
