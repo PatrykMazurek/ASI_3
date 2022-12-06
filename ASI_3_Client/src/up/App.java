@@ -6,9 +6,11 @@ import up.TestThread.StartTikTak;
 import up.TestThread.TestRunnable;
 import up.TestThread.TestThread;
 import up.TestThread.TikTak;
+import up.server.SecretInfo;
 import up.server.UDPClient;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -79,41 +81,51 @@ public class App {
 //        t1.start();
 //        t2.start();
 //        t3.start();
+//
+//        BoardGame bg = new BoardGame();
+//        List<BoardGame> boardGameList = bg.initListGame();
+//
+        SecretInfo si = new SecretInfo();
+        byte[] key = "1234567890qwerty".getBytes();
+        byte[] encMsg = si.encryptMessage(key,
+                "Dowolna wiadomosć do zaszyfrowania".getBytes(StandardCharsets.UTF_8));
 
-        BoardGame bg = new BoardGame();
-        List<BoardGame> boardGameList = bg.initListGame();
+        System.out.println( new String(encMsg));
 
-        Supplier<Stream<BoardGame>> stream = () -> boardGameList.stream();
-        Map<Integer, List<BoardGame>> tempList = boardGameList.stream()
-                .filter(g -> g.name.contains("g"))
-                .filter(g -> g.minPlayers > 1)
-                .filter(g -> g.price < 50)
-                .collect(Collectors.groupingBy(BoardGame::getYear));
+        String decMsg = si.decryptMessage(key, encMsg);
+        System.out.println("odszyfrowana wiadomość " + decMsg);
 
-        BoardGame firstBoardGame = boardGameList.stream()
-                .filter(g -> g.name.contains("g"))
-                .filter(g -> g.minPlayers > 1)
-                .max(Comparator.comparing(BoardGame::getRating))
-                .orElse(new BoardGame());
-        System.out.println(firstBoardGame);
+//        Supplier<Stream<BoardGame>> stream = () -> boardGameList.stream();
+//        Map<Integer, List<BoardGame>> tempList = boardGameList.stream()
+//                .filter(g -> g.name.contains("g"))
+//                .filter(g -> g.minPlayers > 1)
+//                .filter(g -> g.price < 50)
+//                .collect(Collectors.groupingBy(BoardGame::getYear));
+//
+//        BoardGame firstBoardGame = boardGameList.stream()
+//                .filter(g -> g.name.contains("g"))
+//                .filter(g -> g.minPlayers > 1)
+//                .max(Comparator.comparing(BoardGame::getRating))
+//                .orElse(new BoardGame());
+//        System.out.println(firstBoardGame);
+//
+//        List<BoardGame> boardGamesSorted = boardGameList.stream()
+//                .sorted(Comparator.comparing(BoardGame::getYear).reversed())
+//                .collect(Collectors.toList());
 
-        List<BoardGame> boardGamesSorted = boardGameList.stream()
-                .sorted(Comparator.comparing(BoardGame::getYear).reversed())
-                .collect(Collectors.toList());
-
-        Predicate<BoardGame> find = g -> g.maxPlayers == 4;
-
-
-        if (stream.get().anyMatch(find)){
-            System.out.println("Tak");
-        }else {
-            System.out.println("Nie");
-        }
-        if (stream.get().allMatch(find)){
-            System.out.println("Tak");
-        }else {
-            System.out.println("Nie");
-        }
+//        Predicate<BoardGame> find = g -> g.maxPlayers == 4;
+//        bg.addYeadToGame(boardGameList, 4);
+//        bg.gameListSorted(boardGameList);
+//        if (stream.get().anyMatch(find)){
+//            System.out.println("Tak");
+//        }else {
+//            System.out.println("Nie");
+//        }
+//        if (stream.get().allMatch(find)){
+//            System.out.println("Tak");
+//        }else {
+//            System.out.println("Nie");
+//        }
 
 //        client.getMessage("end");
 //        client.close();
